@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; media-src 'self' blob: file:; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <title>Video Chapters</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <header class="brand" id="brand" title="Back to library">
+      <div class="logo">▶</div>
+      <div>
+        <h1>Chapters</h1>
+        <p class="sub" id="videoName">No video loaded</p>
+      </div>
+    </header>
+
+    <div class="actions">
+      <button id="openBtn" class="btn primary">
+        <span>＋</span> Open video
+      </button>
+      <button id="importBtn" class="btn secondary needs-video" title="Import chapters from JSON">
+        <span>⇪</span> Import
+      </button>
+      <button id="templateBtn" class="btn ghost" title="Show JSON template">
+        <span>ⓘ</span> Template
+      </button>
+    </div>
+
+    <button id="libraryBtn" class="btn ghost wide needs-video">← Back to library</button>
+
+    <div class="chapter-form needs-video" aria-label="Add chapter">
+      <input id="titleInput" type="text" placeholder="Chapter title" maxlength="80" />
+      <div class="row">
+        <div class="time-field">
+          <label>Start</label>
+          <input id="startInput" type="text" placeholder="0:00" />
+          <button class="btn ghost tiny" id="grabStart" title="Use current time">⏱</button>
+        </div>
+        <div class="time-field">
+          <label>End</label>
+          <input id="endInput" type="text" placeholder="0:00" />
+          <button class="btn ghost tiny" id="grabEnd" title="Use current time">⏱</button>
+        </div>
+      </div>
+      <button id="addBtn" class="btn secondary">Add chapter</button>
+      <p class="hint" id="formError"></p>
+    </div>
+
+    <ul id="chapterList" class="chapter-list needs-video" aria-label="Chapter list"></ul>
+  </aside>
+
+  <dialog id="templateDialog" class="dialog">
+    <div class="dialog-head">
+      <h3>Chapters JSON template</h3>
+      <button class="btn ghost tiny" id="closeTemplate" aria-label="Close">✕</button>
+    </div>
+    <p class="dialog-sub">Paste this into a <code>.json</code> file and import it. Times accept <code>mm:ss</code>, <code>hh:mm:ss</code>, or seconds.</p>
+    <pre id="templateJson"></pre>
+    <div class="dialog-actions">
+      <button class="btn secondary" id="copyTemplate">Copy</button>
+      <button class="btn ghost" id="downloadTemplate">Download</button>
+    </div>
+  </dialog>
+
+  <main class="stage">
+    <!-- Vault view: shown when no video is loaded -->
+    <section id="vaultView" class="vault-view">
+      <header class="vault-header">
+        <div>
+          <h2>Your library</h2>
+          <p class="sub">Every video you open gets its own vault of chapters. Nothing leaves this machine.</p>
+        </div>
+        <input id="vaultSearch" type="search" placeholder="Search…" />
+      </header>
+      <div class="vault-grid" id="vaultGrid"></div>
+      <div class="vault-empty" id="vaultEmpty">
+        <div class="empty-icon">🎞</div>
+        <h3>No videos yet</h3>
+        <p>Drop a video anywhere on this window, or click <b>Open video</b>.</p>
+      </div>
+    </section>
+
+    <!-- Player view: shown when a video is loaded -->
+    <section id="playerView" class="player-view hidden">
+      <div class="player-wrap" id="playerWrap">
+        <video id="player" controls preload="metadata"></video>
+      </div>
+
+      <div class="timeline" id="timeline" aria-hidden="true">
+        <div class="track" id="track"></div>
+        <div class="playhead" id="playhead"></div>
+        <div class="hover-line" id="hoverLine"></div>
+        <div class="tooltip" id="tooltip"></div>
+      </div>
+
+      <div class="now">
+        <span id="nowTitle">—</span>
+        <span id="nowTime" class="muted">0:00</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

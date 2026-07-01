@@ -1,0 +1,15 @@
+{
+  "name": "video-chapters",
+  "version": "1.0.0",
+  "description": "Offline chapter markers for local video files",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^32.0.0"
+  },
+  "dependencies": {
+    "sql.js": "^1.14.1"
+  }
+}

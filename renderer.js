@@ -1,4 +1,4 @@
-const api = window.api;
+const vault = window.api;
 
 const $ = id => document.getElementById(id);
 const video = $('player');
@@ -35,7 +35,7 @@ const downloadTemplate = $('downloadTemplate');
 const closeTemplate = $('closeTemplate');
 const playerWrap = $('playerWrap');
 
-let currentVideo = null;   // full record from api.open / api.pick
+let currentVideo = null;   // full record from vault.open / vault.pick
 let chapters = [];
 let vaultCache = [];       // for search filter without re-hitting DB
 
@@ -96,7 +96,7 @@ function showPlayer(record) {
 
 /* --- vault grid --- */
 async function refreshVault() {
-  vaultCache = await api.list();
+  vaultCache = await vault.list();
   renderVault();
 }
 function renderVault() {
@@ -134,7 +134,7 @@ function renderVault() {
     card.querySelector('.del').addEventListener('click', async ev => {
       ev.stopPropagation();
       if (!confirm(`Remove "${v.name}" from the library? Chapters will be lost.`)) return;
-      await api.remove(v.id);
+      await vault.remove(v.id);
       await refreshVault();
     });
     vaultGrid.appendChild(card);
@@ -145,14 +145,14 @@ function renderVault() {
 vaultSearch.addEventListener('input', renderVault);
 
 async function openVaultEntry(id) {
-  const record = await api.open(id);
+  const record = await vault.open(id);
   if (!record) return;
   // Existence check happens indirectly — video element will error if file is gone.
   showPlayer(record);
 }
 
 async function pickNewVideo() {
-  const record = await api.pick();
+  const record = await vault.pick();
   if (record) { showPlayer(record); refreshVault(); }
 }
 
@@ -168,7 +168,7 @@ function showError(msg, ok = false) {
 
 async function persistChapters() {
   if (!currentVideo) return;
-  chapters = await api.saveChapters(currentVideo.id, chapters);
+  chapters = await vault.saveChapters(currentVideo.id, chapters);
   chapters.sort((a, b) => a.start - b.start);
 }
 
@@ -261,7 +261,7 @@ function updateActive() {
 video.addEventListener('timeupdate', updateActive);
 video.addEventListener('loadedmetadata', async () => {
   if (currentVideo && isFinite(video.duration)) {
-    await api.setDuration(currentVideo.id, video.duration);
+    await vault.setDuration(currentVideo.id, video.duration);
     currentVideo.duration = video.duration;
   }
   render();
@@ -317,16 +317,16 @@ document.addEventListener('drop', async e => {
   e.preventDefault();
   const f = e.dataTransfer.files[0];
   if (!f || !f.type.startsWith('video/')) return;
-  const p = api.pathFor(f);
+  const p = vault.pathFor(f);
   if (!p) return showError('Could not resolve file path.');
-  const record = await api.addFromPath(p);
+  const record = await vault.addFromPath(p);
   if (record) { showPlayer(record); refreshVault(); }
 });
 
 /* --- JSON import --- */
 importBtn.addEventListener('click', async () => {
   if (!currentVideo) return showError('Load a video first.');
-  const text = await api.pickJson();
+  const text = await vault.pickJson();
   if (!text) return;
   try {
     const data = JSON.parse(text);

@@ -9,10 +9,10 @@ let dbPath;
 
 async function initDb() {
   const SQL = await initSqlJs({
-    // sql.js needs to find sql-wasm.wasm; point it into node_modules
     locateFile: f => path.join(__dirname, 'node_modules', 'sql.js', 'dist', f),
   });
   dbPath = path.join(app.getPath('userData'), 'vault.db');
+  console.log('[db] path:', dbPath);
   if (fs.existsSync(dbPath)) {
     db = new SQL.Database(fs.readFileSync(dbPath));
   } else {
@@ -171,11 +171,19 @@ function createWindow() {
       nodeIntegration: false,
     },
   });
+  win.webContents.on('console-message', (_e, level, msg, line, src) => {
+    const tag = ['LOG','WARN','ERR','INFO','DEBUG'][level] || 'LOG';
+    console.log(`[renderer/${tag}] ${msg}${src ? ` (${src}:${line})` : ''}`);
+  });
+  win.webContents.on('render-process-gone', (_e, d) => console.error('[render-process-gone]', d));
   win.loadFile('index.html');
 }
 
+process.on('unhandledRejection', r => console.error('[unhandledRejection]', r));
+process.on('uncaughtException',   e => console.error('[uncaughtException]', e));
+
 app.whenReady().then(async () => {
-  await initDb();
+  try { await initDb(); } catch (e) { console.error('[initDb] failed:', e); }
   createWindow();
 });
 

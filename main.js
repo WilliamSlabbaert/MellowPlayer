@@ -2,6 +2,18 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { pathToFileURL } = require('url');
+
+// ponytail: last-resort crash log so a startup failure isn't a silent exit.
+// Attached BEFORE the sql.js require, which is the most likely thing to throw.
+function logCrash(err) {
+  try {
+    fs.writeFileSync(path.join(app.getPath('userData'), 'crash.log'),
+      new Date().toISOString() + '\n' + (err && err.stack || String(err)) + '\n');
+  } catch {}
+}
+process.on('uncaughtException', logCrash);
+process.on('unhandledRejection', logCrash);
+
 const initSqlJs = require('sql.js');
 
 let db;

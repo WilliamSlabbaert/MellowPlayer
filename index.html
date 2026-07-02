@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; media-src 'self' blob: file:; style-src 'self' 'unsafe-inline'; script-src 'self'" />
   <title>Video Chapters</title>
+  <link rel="icon" href="favicon.svg" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -30,7 +31,8 @@
 
     <button id="libraryBtn" class="btn ghost wide needs-video">← Back to library</button>
 
-    <div class="chapter-form needs-video" aria-label="Add chapter">
+    <details class="chapter-form needs-video" open aria-label="Add chapter">
+      <summary><span class="chev">▾</span> Add chapter</summary>
       <input id="titleInput" type="text" placeholder="Chapter title" maxlength="80" />
       <div class="row">
         <div class="time-field">
@@ -46,7 +48,7 @@
       </div>
       <button id="addBtn" class="btn secondary">Add chapter</button>
       <p class="hint" id="formError"></p>
-    </div>
+    </details>
 
     <ul id="chapterList" class="chapter-list needs-video" aria-label="Chapter list"></ul>
   </aside>

@@ -13,7 +13,8 @@
     "productName": "Video Chapters",
     "files": ["**/*", "!dist/**"],
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "icon.png"
     }
   },
   "devDependencies": {

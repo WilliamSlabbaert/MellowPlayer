@@ -208,8 +208,16 @@ body {
   aspect-ratio: 16 / 9;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   display: grid; place-items: center;
-  color: white; font-size: 40px;
+  color: white;
   position: relative;
+  padding: 10px;
+}
+.vault-card .thumb .thumb-title {
+  font-size: 15px; font-weight: 700; line-height: 1.25;
+  text-align: center; color: white;
+  text-shadow: 0 1px 3px rgba(0,0,0,.45);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .vault-card .thumb .badge-dur {
   position: absolute; right: 8px; bottom: 8px;
@@ -255,6 +263,23 @@ body.has-video .brand:hover .logo { filter: brightness(1.15); }
 
 /* Toggle chapter form + list based on video-loaded state */
 body:not(.has-video) .needs-video { display: none; }
+body.has-video #openBtn { display: none; }
+
+/* Collapsible chapter form */
+.chapter-form > summary {
+  list-style: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+  margin: -2px 0 2px;
+  user-select: none;
+}
+.chapter-form > summary::-webkit-details-marker { display: none; }
+.chapter-form > summary .chev { transition: transform .12s ease; display: inline-block; }
+.chapter-form:not([open]) > summary { margin-bottom: -2px; }
+.chapter-form:not([open]) > summary .chev { transform: rotate(-90deg); }
 
 /* Dialog */
 .dialog {

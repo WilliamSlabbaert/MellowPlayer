@@ -176,6 +176,7 @@ function createWindow() {
     minHeight: 600,
     backgroundColor: '#0f1115',
     title: 'Video Chapters',
+    icon: path.join(__dirname, 'icon.png'),
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),

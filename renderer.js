@@ -99,6 +99,13 @@ async function refreshVault() {
   vaultCache = await vault.list();
   renderVault();
 }
+// ponytail: deterministic hue per title so a video's brick color is stable across renders.
+function hashHue(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h) % 360;
+}
+
 function renderVault() {
   const q = (vaultSearch.value || '').toLowerCase().trim();
   const filtered = q ? vaultCache.filter(v => v.name.toLowerCase().includes(q)) : vaultCache;
@@ -115,13 +122,16 @@ function renderVault() {
     const card = document.createElement('div');
     card.className = 'vault-card';
     card.innerHTML = `
-      <div class="thumb">🎞<span class="badge-dur"></span></div>
+      <div class="thumb"><span class="thumb-title"></span><span class="badge-dur"></span></div>
       <div class="info">
         <div class="name"></div>
         <div class="meta"><span class="count"></span><span class="time"></span></div>
       </div>
       <button class="del" title="Delete from library">✕</button>
     `;
+    const hue = hashHue(v.name);
+    card.querySelector('.thumb').style.background = `hsl(${hue} 55% 42%)`;
+    card.querySelector('.thumb-title').textContent = v.name;
     card.querySelector('.name').textContent = v.name;
     card.querySelector('.badge-dur').textContent = fmt(v.duration);
     card.querySelector('.count').textContent = `${v.chapterCount} chapter${v.chapterCount === 1 ? '' : 's'}`;
@@ -159,6 +169,19 @@ async function pickNewVideo() {
 /* --- add chapter (video-loaded view) --- */
 grabStart.addEventListener('click', e => { e.preventDefault(); startInput.value = fmt(video.currentTime); });
 grabEnd.addEventListener('click', e => { e.preventDefault(); endInput.value = fmt(video.currentTime); });
+
+/* Live time mask: strip non-digits, regroup right-to-left as h:mm:ss / m:ss. */
+function maskTime(raw) {
+  const d = String(raw).replace(/\D/g, '').slice(-6);
+  if (!d) return '';
+  if (d.length <= 2) return d;
+  const ss = d.slice(-2), mm = d.slice(-4, -2), hh = d.slice(0, -4);
+  return hh ? `${hh}:${mm}:${ss}` : `${mm}:${ss}`;
+}
+[startInput, endInput].forEach(el => {
+  el.setAttribute('inputmode', 'numeric');
+  el.addEventListener('input', () => { el.value = maskTime(el.value); });
+});
 
 function showError(msg, ok = false) {
   formError.textContent = msg;
@@ -219,6 +242,7 @@ function render() {
     });
     li.querySelector('.del').addEventListener('click', async ev => {
       ev.stopPropagation();
+      if (!confirm(`Delete chapter "${c.title}"?`)) return;
       chapters.splice(i, 1);
       await persistChapters();
       render();

@@ -23,6 +23,14 @@ npm start
 
 Requires Node.js and Electron (installed via `npm install`).
 
+## Build (Windows installer)
+
+```bash
+npm run dist
+```
+
+Produces `dist/MellowPlayer Setup 1.0.0.exe` (electron-builder, NSIS).
+
 ## Data
 
 Chapters live in `vault.db` under Electron's per-user `userData` directory —

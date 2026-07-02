@@ -1,4 +1,4 @@
-# Video Chapters
+# MellowPlayer
 
 Offline chapter markers for your local video files. An Electron desktop app —
 open a video, mark chapters, and everything stays on your machine (no uploads,

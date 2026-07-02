@@ -1,5 +1,5 @@
 {
-  "name": "video-chapters",
+  "name": "mellowplayer",
   "version": "1.0.0",
   "description": "Offline chapter markers for local video files",
   "main": "main.js",
@@ -9,8 +9,8 @@
     "dist": "electron-builder"
   },
   "build": {
-    "appId": "com.williamslabbaert.videochapters",
-    "productName": "Video Chapters",
+    "appId": "com.williamslabbaert.mellowplayer",
+    "productName": "MellowPlayer",
     "files": ["**/*", "!dist/**"],
     "win": {
       "target": "nsis",
